@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 配置Mabatis映射文件 -->
+<mapper namespace="com.dao.AllotDAO">
+	<resultMap type="allot" id="allotMap">
+		<id property="allotid" column="allotid" />
+		<result property="ordersid" column="ordersid" />
+		<result property="employid" column="employid" />
+		<result property="addtime" column="addtime" />
+		<result property="status" column="status" />
+		<result property="ordercode" column="ordercode" />
+		<result property="realname" column="realname" />
+	</resultMap>
+	<!-- 插入语句 DAO通过id调用此配置 -->
+	<insert id="insertAllot" parameterType="allot">
+		insert into allot(allotid , ordersid , employid , addtime , status )
+		values(#{allotid} , #{ordersid} , #{employid} , #{addtime} , #{status}
+		)
+	</insert>
+	<!-- 更新语句 DAO通过id调用此配置 -->
+	<update id="updateAllot" parameterType="allot">
+		update allot set ordersid=#{ordersid} , employid=#{employid} ,
+		addtime=#{addtime} , status=#{status} where allotid=#{allotid}
+	</update>
+	<!-- 按主键删除 DAO通过id调用此配置 -->
+	<delete id="deleteAllot" parameterType="String">
+		delete from allot where allotid = #{allotid}
+	</delete>
+	<!-- 查询全部信息 DAO通过id调用此配置 -->
+	<select id="getAllAllot" resultMap="allotMap">
+		select a.* , b.ordercode , c.realname from allot a , orders b , employ c
+		where 1=1 and a.ordersid = b.ordersid and a.employid = c.employid
+		order by allotid desc
+	</select>
+	<!-- 按主键查询 DAO通过id调用此配置 -->
+	<select id="getAllotById" parameterType="String" resultMap="allotMap">
+		select a.* , b.ordercode , c.realname from allot a , orders b , employ
+		c where 1=1 and a.ordersid = b.ordersid and a.employid = c.employid
+		and allotid=#{allotid} order by allotid desc
+	</select>
+	<!-- 按条件精确查询 DAO通过id调用此配置 -->
+	<select id="getAllotByCond" parameterType="allot" resultMap="allotMap">
+		select a.* , b.ordercode , c.realname from allot a , orders b , employ
+		c where 1=1 and a.ordersid = b.ordersid and a.employid = c.employid
+		<if test="ordersid != null and '' != ordersid">
+			and a.ordersid = #{ordersid}
+		</if>
+		<if test="employid != null and '' != employid">
+			and a.employid = #{employid}
+		</if>
+		<if test="addtime != null and '' != addtime">
+			and a.addtime = #{addtime}
+		</if>
+		<if test="status != null and '' != status">
+			and a.status = #{status}
+		</if>
+	</select>
+	<!-- 按条件模糊查询 DAO通过id调用此配置 -->
+	<select id="getAllotByLike" parameterType="allot" resultMap="allotMap">
+		select a.* , b.ordercode , c.realname from allot a , orders b , employ
+		c where 1=1 and a.ordersid = b.ordersid and a.employid = c.employid
+		<if test="ordersid != null and '' != ordersid">
+			and a.ordersid like CONCAT('%', CONCAT(#{ordersid}, '%'))
+		</if>
+		<if test="employid != null and '' != employid">
+			and a.employid like CONCAT('%', CONCAT(#{employid}, '%'))
+		</if>
+		<if test="addtime != null and '' != addtime">
+			and a.addtime like CONCAT('%', CONCAT(#{addtime}, '%'))
+		</if>
+		<if test="status != null and '' != status">
+			and a.status like CONCAT('%', CONCAT(#{status}, '%'))
+		</if>
+	</select>
+	<select id="getAllotByEmployid" parameterType="salaryDto" resultMap="allotMap">
+	    select ordersid  
+	    from allot 
+	    where employid=#{employid} and addtime like CONCAT(#{date}, '%')
+	</select>
+</mapper>
+
+
